@@ -1,0 +1,35 @@
+table#desk {
+    border: 0;
+    border-bottom: solid 1px #888;
+    border-right: solid 1px #888;
+    border-spacing: 0;
+    float: left;
+}
+
+table#desk td {
+    border: 0;
+    border-top: solid 1px #888;
+    border-left: solid 1px #888;
+    border-spacing: 0;
+    height: 100px;
+    width: 100px;
+}
+
+table#desk td.x {
+    background: #444 url(x.png);
+}
+
+table#desk td.o {
+    background: #444 url(o.png);
+}
+
+table#desk td.won {
+    background-color: red;
+}
+
+div.info {
+    width: 200px;
+    position: absolute;
+    left: 400px;
+}
+
