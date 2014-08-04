@@ -16,11 +16,11 @@ table#desk td {
 }
 
 table#desk td.x {
-    background: #444 url(x.png);
+    background: #444 url(/static/x.png);
 }
 
 table#desk td.o {
-    background: #444 url(o.png);
+    background: #444 url(/static/o.png);
 }
 
 table#desk td.won {
