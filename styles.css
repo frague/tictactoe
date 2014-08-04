@@ -33,3 +33,11 @@ div.info {
     left: 400px;
 }
 
+.hidden {
+    display: none;
+}
+
+#welcome {
+    padding-top: 300px;
+    text-align: center;
+}
