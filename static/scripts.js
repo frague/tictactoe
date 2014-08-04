@@ -1,8 +1,8 @@
-var name, sessionId, db, ref, isX = true, finished = false, cells = {}, moves = [], checkLines = [[0, 1], [1, 0], [1, 1], [1, -1]], movesList = document.getElementById('moves');
+var name, owner, sessionId, db, ref, isX = true, finished = false, cells = {}, moves = [], checkLines = [[0, 1], [1, 0], [1, 1], [1, -1]], movesList = document.getElementById('moves');
 
 function move(td, sign) {
     var x = +td.id[1], y = +td.id[2], key = '' + x + y, sign = sign ? sign : isX ? 'x': 'o';
-    if (!cells[key] && !finished) {
+    if (!cells[key] && !finished && (!owner || owner == name || !isX)) {
         moves.push([td.id, sign]);
         cells[key] = sign;
         td.className = sign;
@@ -31,7 +31,8 @@ function move(td, sign) {
             }
         }
         // Update UI
-        document.getElementById('move').innerText = name + ' ' + isX ? 'x': 'o';
+
+        document.getElementById('move').innerHTML = (owner && owner == name ? (isX ? 'Your, ' + name : 'opponent') : name) + '\'s (' + (isX ? 'x': 'o') + ') ';
         var m = document.createElement('li');
         m.innerHTML = sign + ' &rarr; ' + (x + 1) + ' : ' + (y + 1);
         movesList.appendChild(m);
@@ -56,7 +57,7 @@ function readCookie(key) {
     console.log(document.cookie);
     for (var i = 0; i < cookieArray.length; i++) {
         var keyValuePair = cookieArray[i].split('=');
-        if (keyValuePair[0] == key) {
+        if (keyValuePair[0].replace(' ', '') == key) {
             value = keyValuePair[1];
             break;
         }
@@ -68,21 +69,25 @@ function start(id) {
     db = new Firebase('https://burning-fire-3834.firebaseio.com');
     name = document.getElementById("name").value || name;
     createCookie('xoname', name);
-    console.log(name);
+    document.getElementById('move').innerText = (owner && owner == name ? (isX ? 'Your, ' + name : 'opponent') : name) + '\'s (' + (isX ? 'x': 'o') + ') ';
 
     if (id) {
         sessionId = id;
+        ref = db.child(sessionId);
     } else {
         sessionId = '';
         for (var i = 0; i < 20; i++) sessionId += String.fromCharCode(i % 2 ? 65 + 26 * Math.random(): 49 + 9 * Math.random());
         window.location.hash = sessionId;
+        ref = db.child(sessionId);
+        if (name) ref.child(moves.length).setWithPriority({owner: name}, null);
     }
     setVisibility('welcome', false);
     setVisibility('playground', true);
 
-    ref = db.child(sessionId);
     ref.on('child_added', function(i) {
-        move(document.getElementById(i.val().move), i.val().sign);
+        var val = i.val();
+        if (val.owner) owner = val.owner;
+        else move(document.getElementById(i.val().move), i.val().sign);
     })
 }
 
